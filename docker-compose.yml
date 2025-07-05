@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  user-service:
+    build: ./user-service
+    env_file:
+      - ./user-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  product-service:
+    build: ./product-service
+    env_file:
+      - ./product-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  order-service:
+    build: ./order-service
+    env_file:
+      - ./order-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    mem_limit: 512m
+    cpus: 0.5
+    restart: always
+    networks:
+      - microservices-net
+
+# Shared network for all services
+networks:
+  microservices-net:
+    driver: bridge
