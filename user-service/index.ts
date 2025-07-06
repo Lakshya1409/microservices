@@ -1,14 +1,17 @@
 import express from "express";
-import dotenv from "dotenv";
-dotenv.config();
+import { ServerConfig, Logger } from "./src/config";
+import { ApiRoutes } from "./src/routes";
+import { connectMongo } from "./src/config/mongo-config";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-app.get("/users", (req, res) => {
-  res.json({ message: "User service is running!" });
-});
+app.use(express.json());
+app.use("/api", ApiRoutes);
 
-app.listen(PORT, () => {
-  console.log(`User Service listening on port ${PORT}`);
+connectMongo().then(() => {
+  app.listen(ServerConfig.PORT, () => {
+    Logger.info(
+      `Successfully started the server on PORT : ${ServerConfig.PORT}`
+    );
+  });
 });

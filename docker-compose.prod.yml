@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  user-service:
+    image: your-dockerhub-username/user-service:latest
+    env_file:
+      - ./user-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  product-service:
+    image: your-dockerhub-username/product-service:latest
+    env_file:
+      - ./product-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  order-service:
+    image: your-dockerhub-username/order-service:latest
+    env_file:
+      - ./order-service/.env
+    mem_limit: 1g
+    cpus: 1.0
+    restart: always
+    networks:
+      - microservices-net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    mem_limit: 512m
+    cpus: 0.5
+    restart: always
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
