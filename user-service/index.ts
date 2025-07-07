@@ -11,7 +11,7 @@ app.use("/api", ApiRoutes);
 connectMongo().then(() => {
   app.listen(ServerConfig.PORT, () => {
     Logger.info(
-      `Successfully started the server on PORT : ${ServerConfig.PORT}`
+      `User Service successfully started the server on PORT : ${ServerConfig.PORT}`
     );
   });
 });

@@ -1,13 +1,18 @@
 # Use official Node.js LTS image
 FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
+# Copy the rest of the code
 COPY . .
 
-EXPOSE 3002
+# Expose the port
+EXPOSE 3001
 
-CMD ["npx", "ts-node", "index.ts"] 
+# Start the service
+CMD ["node", "index.js"] 
