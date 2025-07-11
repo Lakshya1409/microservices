@@ -13,7 +13,7 @@ export interface PaginationOptions {
   sort?: Record<string, SortOrder>;
 }
 
-export claCrudRepository<T extends Document> {
+export class CrudRepository<T extends Document> {
   protected model: Model<T>;
 
   constructor(model: Model<T>) {
