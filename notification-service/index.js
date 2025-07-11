@@ -1,7 +1,8 @@
 import express from "express";
-import { ServerConfig, Logger } from "./src/config/index.js";
+import { ServerConfig, logger } from "./src/config/index.js";
 import { ApiRoutes } from "./src/routes/index.js";
 import { connectMongo } from "./src/config/mongo-config.js";
+import "./src/events/consumers.js";
 
 const app = express();
 
@@ -10,7 +11,7 @@ app.use("/api", ApiRoutes);
 
 connectMongo().then(() => {
   app.listen(ServerConfig.PORT, () => {
-    Logger.info(
+    logger.info(
       `Notification Service successfully started the server on PORT : ${ServerConfig.PORT}`
     );
   });

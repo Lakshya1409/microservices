@@ -2,7 +2,7 @@ import { createLogger, format, transports } from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import { ServerConfig } from "./server-config";
 
-export const Logger = createLogger({
+export const logger = createLogger({
   level: ServerConfig.LOG_LEVEL,
   format: format.combine(
     format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),

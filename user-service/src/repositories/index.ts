@@ -1,1 +1,2 @@
-export { CrudRepository } from "./crud-repository";
+export * from "./crud-repository";
+export * from "./user-repository";

@@ -1,5 +1,5 @@
 import express from "express";
-import { ServerConfig, Logger } from "./src/config";
+import { ServerConfig, logger } from "./src/config/index";
 import { ApiRoutes } from "./src/routes";
 import { connectMongo } from "./src/config/mongo-config";
 
@@ -10,7 +10,7 @@ app.use("/api", ApiRoutes);
 
 connectMongo().then(() => {
   app.listen(ServerConfig.PORT, () => {
-    Logger.info(
+    logger.info(
       `User Service successfully started the server on PORT : ${ServerConfig.PORT}`
     );
   });
