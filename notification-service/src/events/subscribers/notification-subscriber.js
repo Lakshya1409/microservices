@@ -26,14 +26,13 @@ async function setupAndConsume() {
     NotificationType.PUSH
   );
 
-  // Consume from all queues
-  // await rabbit.consume(QUEUES.SMS, (msg) => {
-  //   if (msg) {
-  //     logger.info(`[SMS] Received: ${msg.content.toString()}`);
-  //     // TODO: handle SMS notification logic
-  //     rabbit.channel.ack(msg);
-  //   }
-  // });
+  await rabbit.consume(QUEUES.SMS, (msg) => {
+    if (msg) {
+      logger.info(`[SMS] Received: ${msg.content.toString()}`);
+      // TODO: handle SMS notification logic
+      rabbit.channel.ack(msg);
+    }
+  });
 
   await rabbit.consume(QUEUES.EMAIL, (msg) => {
     if (msg) {
@@ -43,13 +42,13 @@ async function setupAndConsume() {
     }
   });
 
-  // await rabbit.consume(QUEUES.PUSH, (msg) => {
-  //   if (msg) {
-  //     logger.info(`[PUSH] Received: ${msg.content.toString()}`);
-  //     // TODO: handle Push notification logic
-  //     rabbit.channel.ack(msg);
-  //   }
-  // });
+  await rabbit.consume(QUEUES.PUSH, (msg) => {
+    if (msg) {
+      logger.info(`[PUSH] Received: ${msg.content.toString()}`);
+      // TODO: handle Push notification logic
+      rabbit.channel.ack(msg);
+    }
+  });
 }
 
 setupAndConsume().catch((err) => {

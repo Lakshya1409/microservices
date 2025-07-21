@@ -1,45 +1,50 @@
-import { UserRepository } from "../repositories";
-import { NotificationPublisher } from "../events/publishers";
+import { userRepository } from "../repositories";
+import { notificationPublisher } from "../events/publishers";
 import { IUser } from "../models/user-model";
+import { Types } from "mongoose";
+import { AUTH_MESSAGES, VALIDATION_MESSAGES } from "../utils/messages";
 
-const userRepository = new UserRepository();
-const notificationPublisher = new NotificationPublisher();
+export const userService = {
+  async getUserById(userId: string): Promise<IUser | null> {
+    return userRepository.findById(userId);
+  },
 
-export async function registerUser({
-  name,
-  email,
-  password,
-}: {
-  name: string;
-  email: string;
-  password: string;
-}) {
-  if (!name || !email || !password) {
-    throw new Error("All fields are required.");
-  }
-  const existing = await userRepository.customQuery({ email });
-  if (existing.length > 0) {
-    throw new Error("Email already registered.");
-  }
-  const user = (await userRepository.create({
-    name,
-    email,
-    password,
-  })) as IUser;
-  await notificationPublisher.setup();
-  await notificationPublisher.publishSMS(String(user._id), "Your SMS body", {
-    name,
-    email,
-  });
-  await notificationPublisher.publishEmail(
-    String(user._id),
-    "Welcome!",
-    "Your email body",
-    { name, email }
-  );
-  await notificationPublisher.publishPush(String(user._id), "Your push body", {
-    name,
-    email,
-  });
-  return user;
-}
+  async getAllUsers(): Promise<IUser[]> {
+    return userRepository.findAll();
+  },
+
+  async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser> {
+    const updatedUser = await userRepository.updateById(userId, updateData);
+    if (!updatedUser) {
+      throw new Error(AUTH_MESSAGES.USER_NOT_FOUND);
+    }
+    return updatedUser;
+  },
+
+  async deleteUser(userId: string): Promise<void> {
+    const deleted = await userRepository.deleteById(userId);
+    if (!deleted) {
+      throw new Error(AUTH_MESSAGES.USER_NOT_FOUND);
+    }
+  },
+
+  async findByEmail(email: string): Promise<IUser | null> {
+    return userRepository.findByEmail(email);
+  },
+
+  async updateLastLogin(userId: string): Promise<void> {
+    await userRepository.updateLastLogin(new Types.ObjectId(userId));
+  },
+
+  async verifyEmail(userId: string): Promise<void> {
+    await userRepository.verifyEmail(new Types.ObjectId(userId));
+  },
+
+  async deactivateUser(userId: string): Promise<void> {
+    await userRepository.deactivateUser(new Types.ObjectId(userId));
+  },
+
+  async activateUser(userId: string): Promise<void> {
+    await userRepository.activateUser(new Types.ObjectId(userId));
+  },
+};

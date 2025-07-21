@@ -1,19 +1,19 @@
 import dotenv from "dotenv";
+import {
+  getRequiredEnv,
+  getOptionalEnv,
+  getOptionalNumberEnv,
+} from "../utils/helpers";
+
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI;
-if (!MONGODB_URI) {
-  throw new Error("MONGODB_URI environment variable is required");
-}
-
-const RABBITMQ_URI = process.env.RABBITMQ_URI;
-if (!RABBITMQ_URI) {
-  throw new Error("RABBITMQ_URI environment variable is required");
-}
-
 export const ServerConfig = {
-  PORT: process.env.PORT || 3001,
-  LOG_LEVEL: process.env.LOG_LEVEL || "info",
-  MONGODB_URI,
-  RABBITMQ_URI,
-};
+  PORT: getOptionalNumberEnv("PORT", 3001),
+  LOG_LEVEL: getOptionalEnv("LOG_LEVEL", "info"),
+  MONGODB_URI: getRequiredEnv("MONGODB_URI"),
+  RABBITMQ_URI: getRequiredEnv("RABBITMQ_URI"),
+  JWT: {
+    ACCESS_TOKEN_SECRET: getRequiredEnv("JWT_ACCESS_TOKEN_SECRET"),
+    REFRESH_TOKEN_SECRET: getRequiredEnv("JWT_REFRESH_TOKEN_SECRET"),
+  },
+} as const;
